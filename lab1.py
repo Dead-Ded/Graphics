@@ -11,7 +11,9 @@ class Vertex:
 
 class Model:
 
-    def __init__(self, scale=1, offset=0):
+    def __init__(self, height=0, width=0, scale=1, offset=0):
+        self.width = width
+        self.height = height
         self.scale, self.offset = scale, offset
         self.points = list()
         self.polygons = list()
@@ -30,8 +32,7 @@ class Model:
             # print(self.polygons)
 
     def dot_render(self):
-        global H, W
-        mat = np.zeros((H, W), dtype=np.uint8)
+        mat = np.zeros((self.height, self.width), dtype=np.uint8)
         for p in self.points:
             mat[round(p[1])][round(p[0])] = 255
             mat[round(p[1])][round(p[0]) + 1] = 255
@@ -40,17 +41,15 @@ class Model:
             mat[round(p[1]) - 1][round(p[0])] = 255
         return Image.fromarray(mat)
 
-    def render(self):
-        global H, W
-        mat = np.zeros((H, W), dtype=np.uint8)
+    def render_line(self):
+        mat = np.zeros((self.height, self.width), dtype=np.uint8)
         for p in self.polygons:
             for j in range(len(p)):
                 line(p[j][0], p[j][1], p[(j + 1) % len(p)][0], p[(j + 1) % len(p)][1], 255, mat)
         return Image.fromarray(mat)
 
     def render_bres(self):
-        global H, W
-        mat = np.zeros((H, W), dtype=np.uint8)
+        mat = np.zeros((self.height, self.width), dtype=np.uint8)
         for p in self.polygons:
             for j in range(len(p)):
                 line_bresenhem(p[j][0], p[j][1], p[(j + 1) % len(p)][0], p[(j + 1) % len(p)][1], 255, mat)
@@ -100,18 +99,19 @@ def line_bresenhem(x0, y0, x1, y1, colour, image: np.array(np.array(0, dtype=flo
             image[y, x] = colour
 
 
-H, W = 4000, 4000
+if __name__ == "__main__":
+    H, W = 4000, 4000
 
-model = Model()  # offset, scale
-# with open("12221_Cat_v1_l3.obj") as file:
-with open("model_2.obj") as file:
-    model.parse(file)
-# print(model.polygons)
-# print(model.points)
-# img = model.render()
-img = model.dot_render()
-img = ImageOps.flip(img)
-img.show("lab1_dots.png")
-img = model.render_bres()
-img = ImageOps.flip(img)
-img.show("lab1_render.png")
+    model = Model(H, W)  # offset, scale
+    # with open("12221_Cat_v1_l3.obj") as file:
+    with open("model_2.obj") as file:
+        model.parse(file)
+    # print(model.polygons)
+    # print(model.points)
+    # img = model.render()
+    img = model.dot_render()
+    img = ImageOps.flip(img)
+    img.show("lab1_dots.png")
+    img = model.render_bres()
+    img = ImageOps.flip(img)
+    img.show("lab1_render.png")
