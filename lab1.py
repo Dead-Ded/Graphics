@@ -31,7 +31,7 @@ class Model:
                     ))
             # print(self.polygons)
 
-    def dot_render(self):
+    def dot_render(self): # Rewrite
         mat = np.zeros((self.height, self.width), dtype=np.uint8)
         for p in self.points:
             mat[round(p[1])][round(p[0])] = 255
